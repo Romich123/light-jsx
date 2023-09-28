@@ -27,5 +27,8 @@
         "type": "git",
         "url": "git+https://github.com/Romich123/light-jsx.git"
     },
-    "homepage": "https://github.com/Romich123/light-jsx#readme"
+    "homepage": "https://github.com/Romich123/light-jsx#readme",
+    "publishConfig": {
+        "access": "public"
+    }
 }
