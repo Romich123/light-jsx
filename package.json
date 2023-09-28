@@ -1,6 +1,6 @@
 {
     "name": "light-jsx",
-    "version": "0.0.1",
+    "version": "0.1.1",
     "description": "Light implementation of JSX, that produces DOM nodes and allows for reactivity.",
     "keywords": [
         "jsx"
