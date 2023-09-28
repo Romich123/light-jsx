@@ -228,7 +228,7 @@ export namespace LightJSX {
         return elm
     }
 
-    export function DOMcreateElement(component: JSX.Input, attrs?: { [key: string]: any }, ...children: any[]): Node | Node[] {
+    export function DOMcreateElement(component: JSX.Input, attrs?: { [key: string]: any }, ...children: any[]): JSX.Element {
         attrs = attrs || {}
 
         const stack = children.flat(Infinity).map(anyToNodes).flat(Infinity) as Node[]
@@ -245,9 +245,9 @@ export namespace LightJSX {
         return el
     }
 
-    export const Fragment: JSX.Input = (props) => props.children.flat(Infinity).map(anyToNodes).flat(Infinity) as Node[]
+    export const Fragment: JSX.Input = (props) => props.children.flat(Infinity).map(anyToNodes).flat(Infinity) as JSX.Element
 
-    export function render(html: Element, inp: Node | Node[] | (() => Node | Node[])) {
+    export function render(html: Element, inp: JSX.Element | (() => JSX.Element)) {
         const nodes = anyToNodes(inp).flat(Infinity)
 
         for (const node of nodes) {
