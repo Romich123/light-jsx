@@ -11,7 +11,7 @@
     "module": "dist/index.mjs",
     "types": "dist/index.d.ts",
     "scripts": {
-        "build": "del dist && tsc --declaration",
+        "build": "tsc --declaration",
         "release": "npm run build && npx changeset publish",
         "lint": "tsc"
     },
