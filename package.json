@@ -1,7 +1,7 @@
 {
-    "name": "light-jsx",
+    "name": "light-jsx-repository",
     "version": "0.3.3",
-    "description": "Light implementation of JSX, that produces DOM nodes and allows for reactivity.",
+    "description": "Repository with source code for light-jsx, implementation of JSX, that produces DOM nodes and allows for reactivity.",
     "keywords": [
         "jsx"
     ],
@@ -9,23 +9,22 @@
     "license": "MIT",
     "main": "src/index.ts",
     "scripts": {
-        "build": "tsc --declaration",
-        "release": "npm run build && npx changeset publish",
-        "lint": "tsc"
+        "build": "rimraf ./dist && tsc && ts-node utils/metaFill.ts",
+        "release": "pnpm run build && npx tsx ./utils/updateVersion && npx tsx ./utils/publishToGithub && cd dist && npm publish"
     },
     "devDependencies": {
         "@changesets/cli": "^2.26.2",
+        "@types/inquirer": "^9.0.3",
+        "@types/node": "^20.7.1",
+        "@types/semver": "^7.5.3",
+        "rimraf": "^5.0.5",
+        "ts-node": "^10.9.1",
+        "tsx": "^3.13.0",
         "typescript": "^5.2.2"
     },
-    "bugs": {
-        "url": "https://github.com/Romich123/light-jsx/issues"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/Romich123/light-jsx.git"
-    },
-    "homepage": "https://github.com/Romich123/light-jsx#readme",
-    "publishConfig": {
-        "access": "public"
+    "dependencies": {
+        "inquirer": "^9.2.11",
+        "semver": "^7.5.4",
+        "simple-git": "^3.20.0"
     }
 }
