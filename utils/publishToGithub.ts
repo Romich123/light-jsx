@@ -16,7 +16,7 @@ inquirer
             .add("-A")
             .commit(output.commitMessage)
             .push("origin", "main")
-            .addTag(currentVersion)
+            .tag([currentVersion])
             .then((result) => {
                 console.log(result)
             })
