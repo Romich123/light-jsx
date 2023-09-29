@@ -8,7 +8,7 @@ type Context = {
 let currentContext: Context | null = null
 
 export type Getter<T> = () => T
-export type Setter<T> = (t: T | (() => T)) => void
+export type Setter<T> = (t: T | ((t: T) => T)) => void
 
 export function createSignal<T>(defaultVal: T) {
     let val = defaultVal
@@ -21,11 +21,19 @@ export function createSignal<T>(defaultVal: T) {
             return val
         },
         (v: T) => {
+            let newVal
             if (typeof v === "function") {
-                val = v()
+                newVal = v(val)
             } else {
-                val = v
+                newVal = v
             }
+
+            if (newVal === val) {
+                val = newVal
+                return
+            }
+
+            val = newVal
 
             for (let context of contexts.keys()) {
                 context.fn?.()

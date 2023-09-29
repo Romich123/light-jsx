@@ -1,15 +1,13 @@
 {
     "name": "light-jsx",
-    "version": "0.2.0",
+    "version": "0.2.2",
     "description": "Light implementation of JSX, that produces DOM nodes and allows for reactivity.",
     "keywords": [
         "jsx"
     ],
     "author": "Romich123",
     "license": "MIT",
-    "main": "dist/index.js",
-    "module": "dist/index.mjs",
-    "types": "dist/index.d.ts",
+    "main": "src/index.ts",
     "scripts": {
         "build": "tsc --declaration",
         "release": "npm run build && npx changeset publish",
