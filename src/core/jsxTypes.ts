@@ -50,9 +50,9 @@ export namespace JSX {
             /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/fullscreenerror_event) */
             onfullscreenerror: (this: Element, ev: Event) => any
         }> &
-        Partial<GlobalEventHandlers> & { [k: string]: Attribute }
+        Partial<GlobalEventHandlers>
 
-    export interface IntrinsicElements {
+    export type IntrinsicElements = { [k: string]: any } & {
         a: {
             "download"?: Attribute
             "href"?: Attribute

@@ -10,5 +10,9 @@
 	"0.3.6": {
 		"date": "Tue, 10 Oct 2023 15:56:41 GMT",
 		"changes": "Now typescript will not give errors, when you pass your own attributes. Earlier that caused problems with SVGs."
+	},
+	"0.3.7": {
+		"date": "Wed, 11 Oct 2023 13:21:10 GMT",
+		"changes": "Another jsx typing changes"
 	}
 }
