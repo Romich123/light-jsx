@@ -9,7 +9,7 @@
     "license": "MIT",
     "main": "src/index.ts",
     "scripts": {
-        "build": "rimraf ./dist && tsc && ts-node utils/metaFill.ts",
+        "build": "npx rimraf ./dist && tsc && ts-node utils/metaFill.ts",
         "release": "pnpm run build && npx tsx ./utils/updateVersion && npx tsx ./utils/publishToGithub && cd dist && npm publish"
     },
     "devDependencies": {

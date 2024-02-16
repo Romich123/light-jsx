@@ -29,6 +29,16 @@ export namespace LightJSX {
         return el
     }
 
+    export function forwardChildren(children: Node[]): Node {
+        const el = document.createElement("div")
+
+        el.style.display = "contents"
+
+        el.append(...children)
+
+        return el
+    }
+
     // changes prev elements
     function replaceNodes(prev: Node[], cur: Node[]) {
         let html
@@ -128,26 +138,28 @@ export namespace LightJSX {
         }
     }
 
-    export function anyToNodes(child: any): Node[] {
+    export function anyToNode(child: any): Node {
         if (child === null || child === undefined) {
-            return [emptyNode()]
+            return emptyNode()
         }
 
         if (child instanceof Node) {
-            return [child]
+            return child
         }
 
         if (Array.isArray(child)) {
-            return child
-                .flat(Infinity)
-                .map((ch) => anyToNodes(ch))
-                .flat(Infinity) as Node[]
+            return forwardChildren(
+                child
+                    .flat(Infinity)
+                    .map((ch) => anyToNode(ch))
+                    .flat(Infinity) as Node[]
+            )
         }
 
         if (typeof child === "string" || typeof child === "number" || typeof child === "bigint" || typeof child === "boolean") {
             child = child + ""
 
-            return [document.createTextNode(child)]
+            return document.createTextNode(child)
         }
 
         if (typeof child === "function") {
@@ -166,12 +178,12 @@ export namespace LightJSX {
                     cur = [cur]
                 }
 
-                cur = cur.flat(Infinity).map(anyToNodes).flat(Infinity)
+                cur = cur.flat(Infinity).map(anyToNode).flat(Infinity)
 
                 replaceNodes(prev, cur)
             })
 
-            return prev
+            return forwardChildren(prev)
         }
 
         throw new Error(`bad jsx child: ${child}`)
@@ -225,7 +237,7 @@ export namespace LightJSX {
     export function DOMcreateElement(component: JSX.Input, attrs?: { [key: string]: any } | null, ...children: any[]): JSX.Element {
         attrs = attrs || {}
 
-        const stack = children.flat(Infinity).map(anyToNodes).flat(Infinity) as Node[]
+        const stack = children.flat(Infinity).map(anyToNode).flat(Infinity) as Node[]
 
         let el: any
 
@@ -239,14 +251,14 @@ export namespace LightJSX {
         return el
     }
 
-    export const Fragment: JSX.Input = (_, children) => children.flat(Infinity).map(anyToNodes).flat(Infinity)
+    export const Fragment: JSX.Input = (_, children) => {
+        return children.flat(Infinity).map(anyToNode).flat(Infinity)
+    }
 
     export function render(html: Element, inp: JSX.Element | (() => JSX.Element) | JSX.Child | (() => JSX.Child)) {
-        const nodes = anyToNodes(inp).flat(Infinity)
+        const node = anyToNode(inp)
 
-        for (const node of nodes) {
-            html.appendChild(node)
-        }
+        html.appendChild(node)
     }
 
     export namespace JSX {

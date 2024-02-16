@@ -1,5 +1,5 @@
 export namespace JSX {
-    export type Element = Rendered | Rendered[] | (() => Rendered | Rendered[])
+    export type Element = Rendered
     export type Attribute = string | number | bigint | boolean | null | undefined | (() => Attribute)
     export type Input<
         T extends {
@@ -20,18 +20,19 @@ export namespace JSX {
           ) => Rendered | Rendered[])
         | (() => Rendered | Rendered[] | Element)
         | string
-    export type Rendered = Node | Node[]
+    export type Rendered = Node
     export type Convinience = string | bigint | number | null
 
     export type Child = Rendered | Convinience | (() => Convinience) | (() => Rendered)
 
     export type AttributesGlobal = { [k: string]: any } & {
+        [k in `data-${string}`]?: Attribute
+    } & {
         "accesskey"?: Attribute
         "autocapitalize"?: Attribute
         "class"?: Attribute
         "contenteditable"?: Attribute
         "contextmenu"?: Attribute
-        "data-*"?: Attribute
         "dir"?: Attribute
         "draggable"?: Attribute
         "hidden"?: Attribute
