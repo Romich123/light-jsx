@@ -1,4 +1,6 @@
 # Changelog
+## 0.4.0 -> 0.4.1 (25-02-2024)
+bug fixes
 ## 0.3.7 -> 0.4.0 (16-02-2024)
 Now every JSX.Element is a single node. Currently don't know if this change is for worse or for better.
 ## 0.3.6 -> 0.3.7 (11-10-2023)

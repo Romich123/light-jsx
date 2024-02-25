@@ -14,17 +14,31 @@ export namespace LightJSX {
     const escapeHtml = (str: object[] | string) => String(str).replace(/[&<>"'\/\\]/g, (s) => `&${entityMap[s]};`)
 
     const emptyNodeSymbol = Symbol("empty node")
+    const textNodeSymbol = Symbol("text node")
 
     type EmptyNode = Text & { [emptyNodeSymbol]: true }
+    type SimpleTextNode = Text & { [textNodeSymbol]: true }
 
     export function isEmptyNode(node: Text): node is EmptyNode {
         return (node as any)[emptyNodeSymbol] ?? false
     }
 
-    export function emptyNode(): Text {
+    export function emptyNode(): EmptyNode {
         const el = document.createTextNode("") as EmptyNode
 
         el[emptyNodeSymbol] = true
+
+        return el
+    }
+
+    export function isSimpleTextNode(node: Text): node is SimpleTextNode {
+        return (node as any)[textNodeSymbol] ?? false
+    }
+
+    export function simpleTextNode(val: string): Text {
+        const el = document.createTextNode(val) as SimpleTextNode
+
+        el[textNodeSymbol] = true
 
         return el
     }
@@ -40,102 +54,20 @@ export namespace LightJSX {
     }
 
     // changes prev elements
-    function replaceNodes(prev: Node[], cur: Node[]) {
-        let html
+    function replaceNode(prev: Node, cur: Node) {
+        let parent = prev.parentNode
 
-        const startLength = prev.length
-
-        for (const pre of prev) {
-            if (pre.parentNode) {
-                html = pre.parentNode
-                break
-            }
+        if (!parent) {
+            throw new Error("no parent")
         }
 
-        if (!html) {
-            prev.length = 0
-            for (const l of cur) {
-                prev.push(l)
-            }
-            return
+        if (prev instanceof Text && cur instanceof Text && isEmptyNode(prev) && isEmptyNode(cur)) {
+            return prev
         }
 
-        if (html.childNodes.length === startLength) {
-            prev.length = 0
-            for (const l of cur) {
-                prev.push(l)
-            }
+        parent.replaceChild(cur, prev)
 
-            html.replaceChildren(...prev)
-            return
-        }
-
-        let prevI = 0
-        let curI = 0
-
-        while (prevI < prev.length && curI < cur.length) {
-            const prevO = prev[prevI]
-            const curO = cur[curI]
-
-            if (!prevO) {
-                prevI++
-                continue
-            }
-
-            if (!curO) {
-                curI++
-                continue
-            }
-
-            try {
-                html.replaceChild(curO, prevO)
-            } catch (e) {
-                console.error("something went wrong, probably because of manual change of the DOM", e)
-                html.appendChild(curO)
-            }
-
-            prevI++
-            curI++
-        }
-
-        while (prevI < prev.length) {
-            const prevO = prev[prevI]
-
-            if (!prevO) {
-                prevI++
-                continue
-            }
-
-            try {
-                html.removeChild(prevO)
-            } catch (e) {
-                console.error("something went wrong, probably because of manual change of the DOM", e)
-            }
-
-            prevI++
-        }
-
-        while (curI < cur.length) {
-            const curO = cur[curI]
-
-            if (!curO) {
-                curI++
-                continue
-            }
-
-            try {
-                html.appendChild(curO)
-            } catch (e) {
-                console.error("something went wrong, probably because of manual change of the DOM", e)
-            }
-
-            curI++
-        }
-
-        prev.length = 0
-        for (const l of cur) {
-            prev.push(l)
-        }
+        return cur
     }
 
     export function anyToNode(child: any): Node {
@@ -159,31 +91,28 @@ export namespace LightJSX {
         if (typeof child === "string" || typeof child === "number" || typeof child === "bigint" || typeof child === "boolean") {
             child = child + ""
 
-            return document.createTextNode(child)
+            return simpleTextNode(child)
         }
 
         if (typeof child === "function") {
             const comp = child as Function
 
-            let prev: Node[] = []
+            let prev!: Node
+            let first = true
 
             createEffect(() => {
-                let cur = comp()
+                let cur: Node = anyToNode(comp())
 
-                if (cur === null || cur === undefined) {
-                    cur = [null]
+                if (first) {
+                    prev = cur
+                    first = false
+                    return
                 }
 
-                if (!Array.isArray(cur)) {
-                    cur = [cur]
-                }
-
-                cur = cur.flat(Infinity).map(anyToNode).flat(Infinity)
-
-                replaceNodes(prev, cur)
+                prev = replaceNode(prev, cur)
             })
 
-            return forwardChildren(prev)
+            return prev
         }
 
         throw new Error(`bad jsx child: ${child}`)
@@ -245,7 +174,7 @@ export namespace LightJSX {
             el = createNativeElement(component, attrs, ...stack)
         } else {
             attrs.children = children
-            el = component(attrs as any, children)
+            el = component(attrs as any, stack)
         }
 
         return el

@@ -18,5 +18,9 @@
 	"0.4.0": {
 		"date": "Fri, 16 Feb 2024 10:31:44 GMT",
 		"changes": "Now every JSX.Element is a single node. Currently don't know if this change is for worse or for better."
+	},
+	"0.4.1": {
+		"date": "Sun, 25 Feb 2024 05:47:50 GMT",
+		"changes": "bug fixes"
 	}
 }
