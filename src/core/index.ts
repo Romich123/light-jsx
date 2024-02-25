@@ -13,6 +13,16 @@ export namespace LightJSX {
 
     const escapeHtml = (str: object[] | string) => String(str).replace(/[&<>"'\/\\]/g, (s) => `&${entityMap[s]};`)
 
+    function isValidHttpUrl(string: string) {
+        try {
+            const url = new URL(string)
+
+            return url.protocol === "http:" || url.protocol === "https:"
+        } catch (_) {
+            return false
+        }
+    }
+
     const emptyNodeSymbol = Symbol("empty node")
     const textNodeSymbol = Symbol("text node")
 
@@ -132,7 +142,11 @@ export namespace LightJSX {
         } else if (val === true) {
             elm.setAttribute(name, name)
         } else if (val !== false && val != null) {
-            elm.setAttribute(name, escapeHtml(val))
+            if (isValidHttpUrl(val)) {
+                elm.setAttribute(name, val)
+            } else {
+                elm.setAttribute(name, escapeHtml(val))
+            }
         } else if (val === false) {
             elm.removeAttribute(name)
         }

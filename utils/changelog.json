@@ -22,5 +22,9 @@
 	"0.4.1": {
 		"date": "Sun, 25 Feb 2024 05:47:50 GMT",
 		"changes": "bug fixes"
+	},
+	"0.4.2": {
+		"date": "Sun, 25 Feb 2024 07:20:39 GMT",
+		"changes": "Fixed urls"
 	}
 }
