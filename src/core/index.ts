@@ -2,27 +2,6 @@ import { createEffect } from "../signals"
 import { JSX as JSXT } from "./jsxTypes"
 
 export namespace LightJSX {
-    const entityMap: Record<string, string> = {
-        "&": "amp",
-        "<": "lt",
-        ">": "gt",
-        '"': "quot",
-        "'": "#39",
-        "/": "#x2F",
-    }
-
-    const escapeHtml = (str: object[] | string) => String(str).replace(/[&<>"'\/\\]/g, (s) => `&${entityMap[s]};`)
-
-    function isValidHttpUrl(string: string) {
-        try {
-            const url = new URL(string)
-
-            return url.protocol === "http:" || url.protocol === "https:"
-        } catch (_) {
-            return false
-        }
-    }
-
     const emptyNodeSymbol = Symbol("empty node")
     const textNodeSymbol = Symbol("text node")
 
@@ -142,11 +121,7 @@ export namespace LightJSX {
         } else if (val === true) {
             elm.setAttribute(name, name)
         } else if (val !== false && val != null) {
-            if (isValidHttpUrl(val)) {
-                elm.setAttribute(name, val)
-            } else {
-                elm.setAttribute(name, escapeHtml(val))
-            }
+            elm.setAttribute(name, val)
         } else if (val === false) {
             elm.removeAttribute(name)
         }
@@ -159,7 +134,7 @@ export namespace LightJSX {
         const elm = document.createElement(tag)
 
         for (let [name, val] of Object.entries(attrs)) {
-            name = escapeHtml(name)
+            name = name
 
             setAttribute(elm, name, val)
         }

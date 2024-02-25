@@ -1,4 +1,6 @@
 # Changelog
+## 0.4.2 -> 0.5.0 (25-02-2024)
+No longer escaping html when setting attributes, because it only led to problems.
 ## 0.4.1 -> 0.4.2 (25-02-2024)
 Fixed urls
 ## 0.4.0 -> 0.4.1 (25-02-2024)
