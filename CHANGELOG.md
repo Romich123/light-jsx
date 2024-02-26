@@ -1,4 +1,9 @@
 # Changelog
+## 0.6.0 -> 0.6.1 (26-02-2024)
+Fragment unwrapping led to errors (who could have thought?)
+Fixed this errors
+
+Testing components's lifetime events
 ## 0.5.0 -> 0.6.0 (26-02-2024)
 # Fragments are now unwrapped.
 

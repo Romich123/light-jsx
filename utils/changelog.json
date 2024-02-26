@@ -34,5 +34,9 @@
 	"0.6.0": {
 		"date": "Mon, 26 Feb 2024 12:04:31 GMT",
 		"changes": "# Fragments are now unwrapped.\r\n\r\nEarlier i made so that every jsx transform into single node, that led to fragments wraping their children into special div.\r\nNow when this special div is passed as child this will result in ignoring it and just passing it's children forward.\r\nNote: fragment will still wrap children if it doen't have jsx parent.\r\n\r\n# Now components treated as functions (currently may leed to unexpected behaviour).\r\n\r\nHow it worked before:\r\nfunction treated as reactive state and will rerender every time signal inside it changes.\r\ncomponents may be seem as functions but actually they are called before passing it as child, resulting in them being just Node, which lead to full app rerenders when some state changed in child component\r\n\r\nHow it works now:\r\nfunctions still function the same\r\ncomponents treated the as functions\r\n\r\nNote: rerender of function will just call it, so if it has signals inside, they will be created again, losing old state"
+	},
+	"0.6.1": {
+		"date": "Mon, 26 Feb 2024 15:26:49 GMT",
+		"changes": "Fragment unwrapping led to errors (who could have thought?)\r\nFixed this errors\r\n\r\nTesting components's lifetime events"
 	}
 }
