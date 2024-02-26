@@ -4,6 +4,7 @@ import { JSX as JSXT } from "./jsxTypes"
 export namespace LightJSX {
     const emptyNodeSymbol = Symbol("empty node")
     const textNodeSymbol = Symbol("text node")
+    const fragmentNodeSymbol = Symbol("fragment node")
 
     type EmptyNode = Text & { [emptyNodeSymbol]: true }
     type SimpleTextNode = Text & { [textNodeSymbol]: true }
@@ -35,6 +36,9 @@ export namespace LightJSX {
     export function forwardChildren(children: Node[]): Node {
         const el = document.createElement("div")
 
+        // @ts-ignore
+        el[fragmentNodeSymbol] = true
+
         el.style.display = "contents"
 
         el.append(...children)
@@ -42,16 +46,15 @@ export namespace LightJSX {
         return el
     }
 
-    // changes prev elements
     function replaceNode(prev: Node, cur: Node) {
         let parent = prev.parentNode
 
-        if (!parent) {
-            throw new Error("no parent")
-        }
-
         if (prev instanceof Text && cur instanceof Text && isEmptyNode(prev) && isEmptyNode(cur)) {
             return prev
+        }
+
+        if (!parent) {
+            throw new Error("no parent")
         }
 
         parent.replaceChild(cur, prev)
@@ -127,11 +130,38 @@ export namespace LightJSX {
         }
     }
 
+    function transformChildren(children: any[]): Node[] {
+        const stack = children.flat(Infinity).map(anyToNode).flat(Infinity) as Node[]
+
+        let index = 0
+        while (index < stack.length) {
+            const child = stack[index]
+
+            if (!child) {
+                continue
+            }
+
+            // @ts-ignore
+            if (child[fragmentNodeSymbol]) {
+                stack.splice(Number(index), 1, ...child.childNodes)
+                index--
+            }
+        }
+
+        return stack
+    }
+
     export function createNativeElement(tag: string, attrs?: { [key: string]: any }, ...children: any[]): JSX.Element {
         attrs = attrs || {}
         const stack: any[] = [...children]
 
-        const elm = document.createElement(tag)
+        let elm
+
+        if (tag === "svg" && attrs) {
+            elm = document.createElementNS(attrs.xmlns, tag)
+        } else {
+            elm = document.createElement(tag)
+        }
 
         for (let [name, val] of Object.entries(attrs)) {
             name = name
@@ -155,15 +185,31 @@ export namespace LightJSX {
     export function DOMcreateElement(component: JSX.Input, attrs?: { [key: string]: any } | null, ...children: any[]): JSX.Element {
         attrs = attrs || {}
 
-        const stack = children.flat(Infinity).map(anyToNode).flat(Infinity) as Node[]
+        const stack = transformChildren(children)
 
         let el: any
 
         if (typeof component === "string") {
             el = createNativeElement(component, attrs, ...stack)
         } else {
-            attrs.children = children
-            el = component(attrs as any, stack)
+            attrs.children = stack
+
+            let prev!: Node
+            let first = true
+
+            createEffect(() => {
+                let cur: Node = anyToNode(component(attrs as any, stack))
+
+                if (first) {
+                    prev = cur
+                    first = false
+                    return
+                }
+
+                prev = replaceNode(prev, cur)
+            })
+
+            el = prev
         }
 
         return el

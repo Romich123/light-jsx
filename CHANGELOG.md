@@ -1,4 +1,22 @@
 # Changelog
+## 0.5.0 -> 0.6.0 (26-02-2024)
+# Fragments are now unwrapped.
+
+Earlier i made so that every jsx transform into single node, that led to fragments wraping their children into special div.
+Now when this special div is passed as child this will result in ignoring it and just passing it's children forward.
+Note: fragment will still wrap children if it doen't have jsx parent.
+
+# Now components treated as functions (currently may leed to unexpected behaviour).
+
+How it worked before:
+function treated as reactive state and will rerender every time signal inside it changes.
+components may be seem as functions but actually they are called before passing it as child, resulting in them being just Node, which lead to full app rerenders when some state changed in child component
+
+How it works now:
+functions still function the same
+components treated the as functions
+
+Note: rerender of function will just call it, so if it has signals inside, they will be created again, losing old state
 ## 0.4.2 -> 0.5.0 (25-02-2024)
 No longer escaping html when setting attributes, because it only led to problems.
 ## 0.4.1 -> 0.4.2 (25-02-2024)
