@@ -1,17 +1,6 @@
 import { createEffect } from "../signals"
 import { JSX as JSXT } from "./jsxTypes"
 
-let currentUnmountFn: (() => void) | null = null
-let currentMountFn: (() => void) | null = null
-
-export function onUnmount(fn: () => void) {
-    currentUnmountFn = fn
-}
-
-export function onMount(fn: () => void) {
-    currentMountFn = fn
-}
-
 export namespace LightJSX {
     const emptyNodeSymbol = Symbol("empty node")
     const textNodeSymbol = Symbol("text node")
@@ -19,9 +8,14 @@ export namespace LightJSX {
 
     type EmptyNode = Text & { [emptyNodeSymbol]: true }
     type SimpleTextNode = Text & { [textNodeSymbol]: true }
+    type FragmentNode = HTMLDivElement & { [fragmentNodeSymbol]: Node[] }
 
     export function isEmptyNode(node: Text): node is EmptyNode {
         return (node as any)[emptyNodeSymbol] ?? false
+    }
+
+    export function isFragmentNode(node: Node): node is FragmentNode {
+        return (node as any)[fragmentNodeSymbol] ?? false
     }
 
     export function emptyNode(): EmptyNode {
@@ -49,9 +43,8 @@ export namespace LightJSX {
             return emptyNode()
         }
 
-        const el = document.createElement("div")
+        const el = document.createElement("div") as FragmentNode
 
-        // @ts-ignore
         el[fragmentNodeSymbol] = children
 
         el.style.display = "contents"
@@ -68,27 +61,25 @@ export namespace LightJSX {
             return [prev, parent]
         }
 
-        // @ts-ignore
-        if (!parent && prev[fragmentNodeSymbol]) {
-            // @ts-ignore
-            const prevChild = prev[fragmentNodeSymbol]
+        if (!parent && isFragmentNode(prev)) {
+            const prevChildren = prev[fragmentNodeSymbol]
 
-            parent = prevChild[0].parentNode
+            if (prevChildren[0]) {
+                parent = prevChildren[0].parentNode
+            } else {
+                console.error(prev, cur)
+                throw new Error("no parent")
+            }
         }
 
         if (!parent) {
             console.error(prev, cur)
-            // @ts-ignore
-            console.error(prev[fragmentNodeSymbol], cur[fragmentNodeSymbol])
             throw new Error("no parent")
         }
 
-        // @ts-ignore
-        if (prev[fragmentNodeSymbol] && cur[fragmentNodeSymbol]) {
-            // @ts-ignore
+        if (isFragmentNode(prev) && isFragmentNode(cur)) {
             cur[fragmentNodeSymbol] = []
 
-            // @ts-ignore
             const prevChilds = prev[fragmentNodeSymbol] as Node[]
             const curChilds = Array.from(cur.childNodes)
 
@@ -100,7 +91,6 @@ export namespace LightJSX {
                 const current = curChilds[curIndex]
 
                 if (prev.isEqualNode(current ?? null)) {
-                    // @ts-ignore
                     cur[fragmentNodeSymbol].push(prev)
 
                     curIndex++
@@ -117,7 +107,7 @@ export namespace LightJSX {
                 const current = curChilds[curIndex]!
 
                 parent.appendChild(current)
-                // @ts-ignore
+
                 cur[fragmentNodeSymbol].push(current)
 
                 curIndex++
@@ -130,9 +120,7 @@ export namespace LightJSX {
             parent.removeChild(prev)
         }
 
-        // @ts-ignore
-        if (prev[fragmentNodeSymbol]) {
-            // @ts-ignore
+        if (isFragmentNode(prev)) {
             prev[fragmentNodeSymbol].forEach((child) => {
                 parent!.removeChild(child)
             })
@@ -142,14 +130,12 @@ export namespace LightJSX {
             return [cur, parent]
         }
 
-        // @ts-ignore
-        if (cur[fragmentNodeSymbol]) {
-            // @ts-ignore
+        if (isFragmentNode(cur)) {
             cur[fragmentNodeSymbol] = []
 
             cur.childNodes.forEach((child) => {
                 parent!.appendChild(child)
-                // @ts-ignore
+
                 cur[fragmentNodeSymbol].push(child)
             })
 
@@ -235,8 +221,7 @@ export namespace LightJSX {
         while (index < stack.length) {
             const child = stack[index]!
 
-            // @ts-ignore
-            if (child[fragmentNodeSymbol] && child.childNodes.length !== 0) {
+            if (isFragmentNode(child) && child.childNodes.length !== 0) {
                 stack.splice(Number(index), 1, ...child.childNodes)
                 continue
             }
@@ -292,16 +277,10 @@ export namespace LightJSX {
 
             let prev!: Node
             let parent!: Node | null
-            let prevUnmountFunc: typeof currentUnmountFn = null
             let first = true
 
             createEffect(() => {
-                currentMountFn = null
-                currentUnmountFn = null
                 let cur: Node = anyToNode(component(attrs as any, stack))
-                if (currentMountFn) {
-                    ;(currentMountFn as () => void)()
-                }
 
                 if (first) {
                     prev = cur
@@ -313,9 +292,6 @@ export namespace LightJSX {
 
                 prev = result[0]
                 parent = result[1]
-
-                prevUnmountFunc?.()
-                prevUnmountFunc = currentUnmountFn
             })
 
             el = prev
