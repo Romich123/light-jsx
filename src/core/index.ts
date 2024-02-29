@@ -131,6 +131,8 @@ export namespace LightJSX {
         }
 
         if (isFragmentNode(cur)) {
+            parent.removeChild(prev)
+
             cur[fragmentNodeSymbol] = []
 
             cur.childNodes.forEach((child) => {
