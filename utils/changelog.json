@@ -42,5 +42,9 @@
 	"0.6.2": {
 		"date": "Wed, 28 Feb 2024 10:43:00 GMT",
 		"changes": "Removed a lot of @ts-ignore.\r\n\r\nFor now lifetime events are removed as they didn't function properly. \\\r\nProbably next update will be fully revolved around them. \\\r\nCurrently don't know how to implement them properly, but one day i will."
+	},
+	"0.6.3": {
+		"date": "Thu, 29 Feb 2024 11:43:42 GMT",
+		"changes": ""
 	}
 }

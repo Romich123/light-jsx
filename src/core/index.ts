@@ -214,7 +214,7 @@ export namespace LightJSX {
         }
     }
 
-    function transformChildren(children: any[]) {
+    export function transformChildren(children: any[]) {
         const stack = children.flat(Infinity).map(anyToNode).flat(Infinity) as Node[]
 
         let index = 0
@@ -305,9 +305,11 @@ export namespace LightJSX {
     }
 
     export function render(html: Element, inp: JSX.Element | (() => JSX.Element) | JSX.Child | (() => JSX.Child)) {
-        const node = anyToNode(inp)
+        const nodes = transformChildren([inp])
 
-        html.appendChild(node)
+        for (const node of nodes) {
+            html.appendChild(node)
+        }
     }
 
     export namespace JSX {
