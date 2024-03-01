@@ -29,7 +29,9 @@ export namespace JSX {
         [k: string]: string
     }
 
-    export type AttributesGlobal = { [k: string]: Attribute } & {
+    export type AttributesGlobal = {
+        [k: string]: any
+    } & {
         [k in `data-${string}`]?: Attribute
     } & {
         "accesskey"?: Attribute
