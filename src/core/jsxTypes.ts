@@ -42,7 +42,7 @@ export namespace JSX {
         "role"?: Attribute
         "slot"?: Attribute
         "spellcheck"?: Attribute
-        "style"?: { [k: string]: string }
+        "style"?: { [k: string]: string } | (() => { [k: string]: string })
         "tabindex"?: Attribute
         "title"?: Attribute
         "translate"?: Attribute

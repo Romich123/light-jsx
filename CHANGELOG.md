@@ -1,4 +1,6 @@
 # Changelog
+## 0.6.5 (01-03-2024)
+style attribute type changed so typescript will not give an error when it is a function
 ## 0.6.4 (29-02-2024)
 Forgot to replace child in replaceChild function. Oops
 ## 0.6.2 (28-02-2024)

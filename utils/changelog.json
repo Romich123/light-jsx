@@ -50,5 +50,9 @@
 	"0.6.4": {
 		"date": "Thu, 29 Feb 2024 11:54:14 GMT",
 		"changes": "Forgot to replace child in replaceChild function. Oops"
+	},
+	"0.6.5": {
+		"date": "Fri, 01 Mar 2024 12:14:23 GMT",
+		"changes": "style attribute type changed so typescript will not give an error when it is a function"
 	}
 }
