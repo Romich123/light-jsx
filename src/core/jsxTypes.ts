@@ -25,7 +25,7 @@ export namespace JSX {
 
     export type Child = Rendered | Convinience | (() => Convinience) | (() => Rendered)
 
-    export type StyleAttribute = { [k in keyof CSSStyleDeclaration as k extends string ? (CSSStyleDeclaration[k] extends Function ? never : k) : never]: CSSStyleDeclaration[k] } & {
+    export type StyleAttribute = { [k in keyof CSSStyleDeclaration as k extends string ? (CSSStyleDeclaration[k] extends Function ? never : k) : never]?: CSSStyleDeclaration[k] } & {
         [k: string]: string
     }
 

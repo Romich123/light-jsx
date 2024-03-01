@@ -58,5 +58,9 @@
 	"0.6.6": {
 		"date": "Fri, 01 Mar 2024 12:33:59 GMT",
 		"changes": "typescript now will hint names of styles"
+	},
+	"0.6.7": {
+		"date": "Fri, 01 Mar 2024 12:53:57 GMT",
+		"changes": ""
 	}
 }
