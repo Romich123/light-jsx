@@ -54,5 +54,9 @@
 	"0.6.5": {
 		"date": "Fri, 01 Mar 2024 12:14:23 GMT",
 		"changes": "style attribute type changed so typescript will not give an error when it is a function"
+	},
+	"0.6.6": {
+		"date": "Fri, 01 Mar 2024 12:33:59 GMT",
+		"changes": "typescript now will hint names of styles"
 	}
 }

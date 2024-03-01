@@ -25,7 +25,11 @@ export namespace JSX {
 
     export type Child = Rendered | Convinience | (() => Convinience) | (() => Rendered)
 
-    export type AttributesGlobal = { [k: string]: any } & {
+    export type StyleAttribute = { [k in keyof CSSStyleDeclaration as k extends string ? (CSSStyleDeclaration[k] extends Function ? never : k) : never]: CSSStyleDeclaration[k] } & {
+        [k: string]: string
+    }
+
+    export type AttributesGlobal = { [k: string]: Attribute } & {
         [k in `data-${string}`]?: Attribute
     } & {
         "accesskey"?: Attribute
@@ -42,7 +46,7 @@ export namespace JSX {
         "role"?: Attribute
         "slot"?: Attribute
         "spellcheck"?: Attribute
-        "style"?: { [k: string]: string } | (() => { [k: string]: string })
+        "style"?: StyleAttribute | (() => StyleAttribute)
         "tabindex"?: Attribute
         "title"?: Attribute
         "translate"?: Attribute

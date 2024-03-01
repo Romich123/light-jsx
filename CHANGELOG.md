@@ -1,4 +1,6 @@
 # Changelog
+## 0.6.6 (01-03-2024)
+typescript now will hint names of styles
 ## 0.6.5 (01-03-2024)
 style attribute type changed so typescript will not give an error when it is a function
 ## 0.6.4 (29-02-2024)
